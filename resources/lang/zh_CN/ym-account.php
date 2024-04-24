@@ -18,7 +18,7 @@ return [
         'phone_number' => '手机号',
         'pds' => 'PDS',
         'google_authenticator' => '谷歌验证器',
-        'other_data' => '冗余字段',
+        'other_data' => '备注',
     ],
     'options' => [
     ],
