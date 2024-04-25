@@ -10,6 +10,6 @@ class YmAccount extends Model
 {
 	use HasDateTimeFormatter;
     protected $table = 'ym_accounts';
-    public $timestamps = false;
+    public $timestamps = true;
 
 }
