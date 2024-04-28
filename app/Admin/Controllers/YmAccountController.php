@@ -84,6 +84,19 @@ class YmAccountController extends AdminController
                         ->orWhere('login_ip', 'like', "%{$this->input}%");
                 
                 })->width(3);
+
+                $filter->equal('type','账号类型')->select([
+                    0=>'新账号(14天过包)',
+                    1=>'老账号',
+                    2=>'转移号',
+                    3=>'火种',
+                    4=>'接受号',
+                ])->width(3);
+
+                $filter->equal('status','账号状态')->select([
+                    1 => '正常',
+                2 => '封号',
+                ])->width(3);
         
             });
         });
