@@ -27,4 +27,16 @@ class YmPackage extends Model
 
     protected $table = 'ym_package';
 
+    // 关联开发者账号表
+    public function account()
+    {
+        return $this->hasOne(YmAccount::class, 'id', 'account_id')->where('account_type','=',0);
+    }
+
+
+    // 关联开发者接收账号表
+    public function receive_account()
+    {
+        return $this->hasOne(YmAccount::class, 'id', 'receive_account_id')->where('account_type','=',1);
+    }
 }

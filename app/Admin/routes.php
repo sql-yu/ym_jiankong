@@ -16,4 +16,5 @@ Route::group([
     $router->resource('package', 'YmPackageController');
     $router->resource('developers', 'YmDeveloperController');
     $router->resource('account', 'YmAccountController');
+    $router->resource('receive_account', 'YmReceiveAccountController');
 });

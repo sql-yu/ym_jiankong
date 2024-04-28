@@ -1,8 +1,8 @@
 <?php 
 return [
     'labels' => [
-        'YmAccount' => 'YmAccount',
-        'ym-account' => 'YmAccount',
+        'YmReceiveAccount' => 'YmReceiveAccount',
+        'ym-receive-account' => 'YmReceiveAccount',
     ],
     'fields' => [
         'name' => '账号别名',

@@ -8,10 +8,11 @@ use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
 
-class YmAccountController extends AdminController
-{
-    public $title = '开发者账号';
+use App\Libraries\GoogleAuthenticator;
 
+class YmReceiveAccountController extends AdminController
+{
+    public $title = '开发者接收者账号';
     /**
      * Make a grid builder.
      *
@@ -44,9 +45,16 @@ class YmAccountController extends AdminController
 // STYLE
 //     );
 
+// $ga = new GoogleAuthenticator();
+// $secret = "zkog j745 gziw dnz7 sgf6 porb e35h 7haw";
+// $oneCode = $ga->getCode($secret);
+// echo $oneCode.'='.date('y-m-d H:i:s',time());
+// exit;
+
+
 
         return Grid::make(new YmAccount(), function (Grid $grid) {
-            $grid->model()->where('account_type','=',0);
+            $grid->model()->where('account_type','=',1);
 
             $grid->column('id')->sortable();
             $grid->column('name');
@@ -64,7 +72,6 @@ class YmAccountController extends AdminController
 
                 return "<span>{$arr[$value]}</span>";
             })->sortable();
-
             $grid->column('google_authenticator');
             $grid->column('status')->options()->radio([
                 1 => '正常',
@@ -171,6 +178,8 @@ class YmAccountController extends AdminController
                 }
             });;
             $form->text('google_authenticator');
+
+            $form->hidden('account_type')->value(1);
 
             $form->list('spare_code')->saving(function ($v) {
                 // 转化为json格式存储
