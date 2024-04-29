@@ -5,6 +5,7 @@ namespace App\Models;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use App\Libraries\OperationLog;
 
 class YmPackage extends Model
 {
@@ -39,4 +40,16 @@ class YmPackage extends Model
     {
         return $this->hasOne(YmAccount::class, 'id', 'receive_account_id')->where('account_type','=',1);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+ 
+        static::deleting(function($model) {
+            #删除时记录日志
+            $request = request();
+            OperationLog::logDesc($request,'ym_package','de','package',$model->id);
+        });
+    }
+
 }

@@ -23,17 +23,44 @@ class YmPackageController extends AdminController
     {
  
         return Grid::make(YmPackage::orderBy("review_time",'desc'), function (Grid $grid) {
+            $package_status = (int)request()->get('package_status', 99);
+            if($package_status == 99){#默认查询1
+                $grid->model()->where('package_status','=',1);
+            }
+
+
             // $grid->column('id')->hidden();
             $grid->column('icon','icon')->image("http://54.173.118.3",100,100);
-            $grid->column('package_name','Package')->width('5%')->copyable();
-            $grid->column('version','版本')->width('10%');
+
+            $grid->column('package_name', 'Package')->width('5%')->link(function (){
+                    // 拼接 id
+                    $_s = $this->package_name;
+                    return 'https://play.google.com/store/apps/details?id=' . $_s;
+            })->display(function ($value) {
+                return "<div style='word-wrap: break-word; width: 200px;'>{$value}</div>";
+            });
+
+            
+            $grid->column('manage_server_addresses', '管理服务器地址')->width('10%')->link(function (){
+                $_s = $this->manage_server_addresses;
+                if(empty($_s)){
+                    return '';
+                }
+                return 'http://'.$_s.':3389/ymgadmin';
+            });
+
+            // $grid->column('version','版本')->width('10%');
             $grid->column('review_time','提审时间')->width('10%')->substr(0, 10);
             $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
             $grid->column('updated_two_at','更新时间')->width('10%')->substr(0, 10);
             //  $item->updated_two_at =  date("Y-m-d H:i:s");
             $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
-            $grid->column('b_url','b面连接')->width('10%');
-            $grid->column('remark','备注')->width('10%')->limit(50, '...');
+            $grid->column('b_url','b面连接')->width('10%')->link(function (){
+                // 拼接 id
+                $_s = $this->b_url;
+                return $_s;
+            });
+            // $grid->column('remark','备注')->width('10%')->limit(50, '...');
             $grid->column('package_status','状态')->using(\App\Models\YmPackage::$status)->dot(
                 [
                     0=>'primary',
@@ -60,7 +87,7 @@ class YmPackageController extends AdminController
                     $query->where('package_name', 'like', "%{$this->input}%");
                 })->width(3);
 
-                $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->width(3);
+                $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->default(1)->width(3);
 
                 $filter->equal('account_id','开发者账号')->select(function(){
                         return \App\Models\YmAccount::where('account_type','=',0)->pluck('name', 'id')->toArray();
@@ -98,6 +125,9 @@ class YmPackageController extends AdminController
             $show->field('takedown_time');
             $show->field('package_status');
             $show->field('b_url');
+            $show->field('text_hash');
+            $show->field('text_privacy');
+            $show->field('manage_server_addresses');
             $show->field('remark','remark')->unescape()->as(function ($content) {
                 // 使用 nl2br() 函数将换行符转换为 HTML 的换行标签
                 return nl2br($content);
@@ -172,6 +202,17 @@ class YmPackageController extends AdminController
               return $v;
             });
 
+            $form->text('text_hash');
+            $form->textarea('text_privacy');
+            $form->ip('manage_server_addresses')->saving(function ($v) {
+                if(empty($v)){
+                    return '';
+                }else{
+                    return $v;
+                }
+            });
+            
+
 
             $form->textarea('remark');
 
@@ -182,6 +223,26 @@ class YmPackageController extends AdminController
                 }
 
             });
+
+            #处理日志逻辑
+            $request = request();
+            if ($form->model()->exists) {
+                // 模型已存在，执行更新操作
+                // 你的更新逻辑代码
+                // 假设你是通过 PUT 方法提交表单
+                if ($request->method() == 'PUT') {#更新操作
+                    OperationLog::logDesc($request,'ym_package','up','package',$form->model()->id);
+                }
+                
+            } else {
+                // 模型不存在，执行插入操作
+                // 你的插入逻辑代码
+                if ($request->method() == 'POST') {#插入操作
+                    OperationLog::logDesc($request,'ym_package','in','package');
+                }
+
+            }
+        
 
         });
     }
