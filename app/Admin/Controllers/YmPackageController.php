@@ -54,7 +54,22 @@ class YmPackageController extends AdminController
             $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
             $grid->column('updated_two_at','更新时间')->width('10%')->substr(0, 10);
             //  $item->updated_two_at =  date("Y-m-d H:i:s");
-            $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
+            // $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
+            $grid->column('ttt','开发者账号类型')->display(function(){
+                $type = $this->account['type']??0;
+                $arr = [
+                    0=>'新账号(14天过包)',
+                    1=>'老账号',
+                    2=>'转移号',
+                    3=>'火种',
+                    4=>'接受号',
+                ];
+                return $arr[$type]??'';
+            });
+
+
+
+
             $grid->column('b_url','b面连接')->width('10%')->link(function (){
                 // 拼接 id
                 $_s = $this->b_url;
