@@ -58,7 +58,14 @@ class YmPackageController extends AdminController
             $grid->column('b_url','b面连接')->width('10%')->link(function (){
                 // 拼接 id
                 $_s = $this->b_url;
-                return $_s;
+
+                #删除http前面的字符串
+                $partToDelete = "http";
+                $pattern = "/^.*?(?=$partToDelete)/";
+                $replacement = '';
+                $newString = preg_replace($pattern, $replacement, $_s);
+
+                return $newString;
             });
             // $grid->column('remark','备注')->width('10%')->limit(50, '...');
             $grid->column('package_status','状态')->using(\App\Models\YmPackage::$status)->dot(
