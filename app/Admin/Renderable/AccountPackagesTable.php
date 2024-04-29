@@ -13,6 +13,7 @@ class AccountPackagesTable extends LazyRenderable
         return Grid::make(new YmPackage(), function (Grid $grid) {
             $id = $this->payload['id'];
             $grid->model()->where('account_id','=',$id);
+            $grid->model()->where('transfer_status','!=',2);
 
 
             $grid->column('id', 'ID')->sortable();

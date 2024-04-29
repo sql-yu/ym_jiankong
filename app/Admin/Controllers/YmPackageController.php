@@ -193,7 +193,7 @@ class YmPackageController extends AdminController
          
             $form->select('package_status')->options(\App\Models\YmPackage::$status)->default(0);
 
-            if ($form->model()->transfer_status == 0) {
+            // if ($form->model()->transfer_status == 0) {
                 $form->select('account_id','开发者账号')->options(function(){
                 return \App\Models\YmAccount::where('account_type','=',0)->pluck('name', 'id')->toArray();
                 })->saving(function ($v) {
@@ -203,7 +203,7 @@ class YmPackageController extends AdminController
                         return $v;
                     }
                 });
-            }
+            // }
 
             
 
@@ -240,9 +240,9 @@ class YmPackageController extends AdminController
 
             $form->saving(function (Form $form) {
                 
-                if($form->transfer_status == 2){
-                    $form->account_id = 0;
-                }
+                // if($form->transfer_status == 2){
+                //     $form->account_id = 0;
+                // }
 
             });
 
