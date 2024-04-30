@@ -6,6 +6,7 @@ use App\Models\YmPackage;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Http\Controllers\AdminController;
 use App\Libraries\OperationLog;
 
@@ -21,6 +22,31 @@ class YmPackageController extends AdminController
      */
     protected function grid()
     {
+        #固定首行
+//         Admin::style(
+//             <<<STYLE
+//         tbody {
+//             display: block;
+//             max-height: 500px;
+//             overflow-y: scroll;
+            
+//         }
+//         /*设置头与内容自动对齐*/
+//         table thead,tfoot,tbody tr {
+//             display: table;
+//             table-layout: fixed;
+//             /*来自coding的添加*/
+//             width:  100%;
+//             word-wrap:  break-word;
+//         }
+//         /*给滚动条预留宽度*/
+//         table thead,tfoot {
+//             width: calc( 100% - 1em);
+//             background: #F5F5F5;
+//             font-weight: bolder;
+//         }
+// STYLE
+//     );
  
         return Grid::make(YmPackage::orderBy("review_time",'desc'), function (Grid $grid) {
             $package_status = (int)request()->get('package_status', 99);
@@ -51,12 +77,17 @@ class YmPackageController extends AdminController
 
             // $grid->column('version','版本')->width('10%');
             $grid->column('review_time','提审时间')->width('10%')->substr(0, 10);
-            $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
+            // $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
             $grid->column('updated_two_at','更新时间')->width('10%')->substr(0, 10);
             //  $item->updated_two_at =  date("Y-m-d H:i:s");
             // $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
+
+            $grid->column('rrr','开发者账号')->display(function(){
+                return $this->account['name']??'';
+            });
+
             $grid->column('ttt','开发者账号类型')->display(function(){
-                $type = $this->account['type']??0;
+                $type = $this->account['type']??'';
                 $arr = [
                     0=>'新账号(14天过包)',
                     1=>'老账号',
@@ -91,7 +122,7 @@ class YmPackageController extends AdminController
                 ]
             );
 
-            // $grid->column('transfer_status')->options()->radio([0=>'未操作',1 => '转移中',2 => '转移完成',]);
+            // $grid->column('transfer_status')->options()->radio([0=>'未操作',1 => '转移中',2 => '转移完成','3'=>'sus','4'=>'被取消',]);
 
             // $grid->quickSearch('package_name');
             $grid->tableCollapse(false);
@@ -217,7 +248,7 @@ class YmPackageController extends AdminController
                 }
             });
 
-            $form->radio('transfer_status')->options(['0' => '未操作', '1'=> '转移中','2'=>'转移完成'])->default('0')->saving(function ($v) {
+            $form->radio('transfer_status')->options(['0' => '未操作', '1'=> '转移中','2'=>'转移完成','3'=>'sus','4'=>'被取消',])->default('0')->saving(function ($v) {
                 if($v == 2){
                     $this->account_id = 0;
                 }
