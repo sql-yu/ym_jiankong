@@ -57,7 +57,15 @@ class YmPackageController extends AdminController
 
 
             // $grid->column('id')->hidden();
-            $grid->column('icon','icon')->image("http://54.173.118.3",100,100);
+            $grid->column('icon','icon')
+                // ->image("http://54.173.118.3",100,100)
+                ->display(function($icon){#
+                    return '<img  src="http://54.173.118.3'.$icon.'" style="max-width:100px;max-height:100px;cursor:pointer" class="img img-thumbnail">';
+                })
+                ->link(function () {#
+                // 这里可以构造详情页面的URL
+                return admin_url('package')."/{$this->id}";
+            });
 
             $grid->column('package_name', 'Package')->width('5%')->link(function (){
                     // 拼接 id
@@ -155,6 +163,13 @@ class YmPackageController extends AdminController
 
         
             });
+
+            
+            // $grid->actions(function (Grid\Displayers\Actions $actions) {
+            //     $id = $actions->getKey();//获取该行数据id值
+            //     $url =  admin_url('package').'/'.$id;//帮助函数admin_url   url地址拼接
+            //     $actions->append("<a href={$url}><i class='fa fa-eye'>详细信息</i></a>");
+            // });
         
             $grid->toolsWithOutline(false);
             $grid->disableBatchDelete();//禁用批量删除
