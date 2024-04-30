@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\YmPackage;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Show;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Http\Controllers\AdminController;
@@ -84,7 +85,7 @@ class YmPackageController extends AdminController
 
             $grid->column('rrr','开发者账号')->display(function(){
                 return $this->account['name']??'';
-            });
+            })->copyable();
 
             $grid->column('ttt','开发者账号类型')->display(function(){
                 $type = $this->account['type']??'';
@@ -156,7 +157,9 @@ class YmPackageController extends AdminController
             });
         
             $grid->toolsWithOutline(false);
-            $grid->disableBatchDelete();
+            $grid->disableBatchDelete();//禁用批量删除
+            $grid->disableRowSelector(); // 禁用行选择器
+
         });
         
     }

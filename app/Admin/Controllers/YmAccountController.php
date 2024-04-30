@@ -24,6 +24,7 @@ class YmAccountController extends AdminController
      */
     protected function grid()
     {
+        #固定首行
 //         Admin::style(
 //             <<<STYLE
 //         tbody {
@@ -51,6 +52,7 @@ class YmAccountController extends AdminController
 
 
         return Grid::make(new YmAccount(), function (Grid $grid) {
+            $grid->async();
             $status = (int)request()->get('status', 99);
             if($status == 99){#默认查询1
                 $grid->model()->where('status','=',1);
@@ -124,6 +126,10 @@ class YmAccountController extends AdminController
                 ])->default(1)->width(3);
         
             });
+
+            $grid->toolsWithOutline(false);
+            $grid->disableBatchDelete();//禁用批量删除
+            $grid->disableRowSelector(); // 禁用行选择器
 
 
 
