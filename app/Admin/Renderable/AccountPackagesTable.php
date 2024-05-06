@@ -17,7 +17,7 @@ class AccountPackagesTable extends LazyRenderable
 
 
             $grid->column('id', 'ID')->sortable();
-            $grid->column('package_name','包名');
+            $grid->column('package_name','包名')->copyable();
 
             $grid->paginate(10);
             $grid->disableActions();
