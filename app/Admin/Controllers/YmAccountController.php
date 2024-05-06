@@ -66,23 +66,20 @@ class YmAccountController extends AdminController
             // $grid->column('login_username');
             $grid->column('login_password')->copyable();
             $grid->column('type')->display(function ($value) {
-                $arr = [
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ];
+                $arr = config('account.type');
 
                 return "<span>{$arr[$value]}</span>";
             })->sortable();
 
-            $grid->column('google_authenticator');
-            $grid->column('status')->options()->radio([
-                1 => '正常',
-                2 => '封号',
-                3 => '验证',
-            ]);
+            $grid->column('google_authenticator');#->editable()
+            $grid->column('status')->options()->radio(config('account.status'));
+
+            if(in_array($status,[4,5])){
+                $grid->column('reset_key_time','重置key时间')->display(function(){
+                    return date('Y-m-d H:i:s',$this->reset_key_time);
+                });
+            }
+
             // $grid->column('num_sus');
             $grid->column('phone_no');
             $grid->column('phone_number');
@@ -111,19 +108,9 @@ class YmAccountController extends AdminController
                 
                 })->width(3);
 
-                $filter->equal('type','账号类型')->select([
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ])->width(3);
+                $filter->equal('type','账号类型')->select(config('account.type'))->width(3);
 
-                $filter->equal('status','账号状态')->select([
-                    1 => '正常',
-                    2 => '封号',
-                    3 => '验证',
-                ])->default(1)->width(3);
+                $filter->equal('status','账号状态')->select(config('account.status'))->default(1)->width(3);
         
             });
 
@@ -165,23 +152,13 @@ class YmAccountController extends AdminController
             $show->field('login_username');
             $show->field('login_password');
             $show->field('status')->as(function ($status) {
-                $arr = [
-                    1 => '正常',
-                    2 => '封号',
-                    3 => '验证',
-                ];
+                $arr = config('account.status');
                 return $arr[$status];
             
             });
-            $show->field('type')->as(function ($status) {
-                $arr = [
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ];
-                return $arr[$status];
+            $show->field('type')->as(function ($type) {
+                $arr = config('account.type');
+                return $arr[$type];
             
             });
 
@@ -212,8 +189,8 @@ class YmAccountController extends AdminController
             $form->ip('login_ip')->rules('required');
             $form->text('login_username')->default('Administrator')->rules('required');
             $form->text('login_password')->rules('required');
-            $form->radio('type')->options([0=>'新账号(14天过包)',1=>'老账号',2=>'转移号',3=>'火种',4=>'接受号',])->default('1');
-            $form->radio('status')->options([1 => '正常',2 => '封号',3 => '验证',])->default('1')->saving(function ($v) {
+            $form->radio('type')->options(config('account.type'))->default('1');
+            $form->radio('status')->options(config('account.status'))->default('1')->saving(function ($v) {
                 if(empty($v)){
                     return 1;
                 }else{
@@ -266,6 +243,22 @@ class YmAccountController extends AdminController
                 }
 
             }
+
+            //保存前回调
+            $form->saving(function (Form $form) {
+
+                #key重置状态 需要记录重置时间
+                if ($form->status == 4) {
+                    // echo $form->status.'-'.$form->model()->id;
+
+                    $form->model()->reset_key_time = time();
+                }
+
+            });
+
+
+            
+
 
         });
     }

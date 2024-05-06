@@ -14,7 +14,7 @@ class PackageService
     {
         return YmPackage::query()->where([
             'account_id'=>$account_id
-        ])->count();
+        ])->where('transfer_status','!=',2)->count();
     }
 
 

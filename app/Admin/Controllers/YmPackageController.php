@@ -86,11 +86,11 @@ class YmPackageController extends AdminController
             });
 
             // $grid->column('version','版本')->width('10%');
-            $grid->column('review_time','提审时间')->width('10%')->substr(0, 10);
+            // $grid->column('review_time','提审时间')->width('10%')->substr(0, 10);
             // $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
             $grid->column('updated_two_at','更新时间')->width('10%')->substr(0, 10);
             //  $item->updated_two_at =  date("Y-m-d H:i:s");
-            // $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
+            $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
 
             $grid->column('rrr','开发者账号')->display(function(){
                 return $this->account['name']??'';

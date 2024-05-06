@@ -24,47 +24,47 @@ class YmReceiveAccountController extends AdminController
      */
     protected function grid()
     {
-//         Admin::style(
-//             <<<STYLE
-//         tbody {
-//             display: block;
-//             max-height: 500px;
-//             overflow-y: scroll;
-            
-//         }
-//         /*设置头与内容自动对齐*/
-//         table thead,tfoot,tbody tr {
-//             display: table;
-//             table-layout: fixed;
-//             /*来自coding的添加*/
-//             width:  100%;
-//             word-wrap:  break-word;
-//         }
-//         /*给滚动条预留宽度*/
-//         table thead,tfoot {
-//             width: calc( 100% - 1em);
-//             background: #F5F5F5;
-//             font-weight: bolder;
-//         }
-// STYLE
-//     );
+        //         Admin::style(
+        //             <<<STYLE
+        //         tbody {
+        //             display: block;
+        //             max-height: 500px;
+        //             overflow-y: scroll;
 
-// $ga = new GoogleAuthenticator();
-// $secret = "zkog j745 gziw dnz7 sgf6 porb e35h 7haw";
-// $oneCode = $ga->getCode($secret);
-// echo $oneCode.'='.date('y-m-d H:i:s',time());
-// exit;
+        //         }
+        //         /*设置头与内容自动对齐*/
+        //         table thead,tfoot,tbody tr {
+        //             display: table;
+        //             table-layout: fixed;
+        //             /*来自coding的添加*/
+        //             width:  100%;
+        //             word-wrap:  break-word;
+        //         }
+        //         /*给滚动条预留宽度*/
+        //         table thead,tfoot {
+        //             width: calc( 100% - 1em);
+        //             background: #F5F5F5;
+        //             font-weight: bolder;
+        //         }
+        // STYLE
+        //     );
+
+        // $ga = new GoogleAuthenticator();
+        // $secret = "zkog j745 gziw dnz7 sgf6 porb e35h 7haw";
+        // $oneCode = $ga->getCode($secret);
+        // echo $oneCode.'='.date('y-m-d H:i:s',time());
+        // exit;
 
 
 
         return Grid::make(new YmAccount(), function (Grid $grid) {
             $grid->async();
             $status = (int)request()->get('status', 99);
-            if($status == 99){#默认查询1
-                $grid->model()->where('status','=',1);
+            if ($status == 99) { #默认查询1
+                $grid->model()->where('status', '=', 1);
             }
 
-            $grid->model()->where('account_type','=',1);
+            $grid->model()->where('account_type', '=', 1);
 
             $grid->column('id')->sortable();
             $grid->column('name');
@@ -72,27 +72,24 @@ class YmReceiveAccountController extends AdminController
             // $grid->column('login_username');
             $grid->column('login_password')->copyable();
             $grid->column('type')->display(function ($value) {
-                $arr = [
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ];
+                $arr = config('account.type');
 
                 return "<span>{$arr[$value]}</span>";
             })->sortable();
             $grid->column('google_authenticator');
-            $grid->column('status')->options()->radio([
-                1 => '正常',
-                2 => '封号',
-                3 => '验证',
-            ]);
+            $grid->column('status')->options()->radio(config('account.status'));
+
+            if (in_array($status, [4, 5])) {
+                $grid->column('reset_key_time', '重置key时间')->display(function () {
+                    return date('Y-m-d H:i:s', $this->reset_key_time);
+                });
+            }
+
             // $grid->column('num_sus');
             $grid->column('phone_no');
             $grid->column('phone_number');
 
-            $grid->column('所有包')->display(function (){
+            $grid->column('所有包')->display(function () {
                 return PackageService::get_receive_account_package_count($this->id);
             })->modal(function (Grid\Displayers\Modal $modal) {
                 // 标题
@@ -105,36 +102,24 @@ class YmReceiveAccountController extends AdminController
                 return ReceiveAccountPackagesTable::make()->payload(['id' => $this->id]);
             });
 
-        
+
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
                 $filter->expand();
-                
+
                 $filter->where('别名/ip', function ($query) {
 
                     $query->where('name', 'like', "%{$this->input}%")
                         ->orWhere('login_ip', 'like', "%{$this->input}%");
-                
                 })->width(3);
 
-                $filter->equal('type','账号类型')->select([
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ])->width(3);
+                $filter->equal('type', '账号类型')->select(config('account.type'))->width(3);
 
-                $filter->equal('status','账号状态')->select([
-                    1 => '正常',
-                    2 => '封号',
-                    3 => '验证',
-                ])->default(1)->width(3);
-        
+                $filter->equal('status', '账号状态')->select(config('account.status'))->default(1)->width(3);
             });
 
             $grid->toolsWithOutline(false);
-            $grid->disableBatchDelete();//禁用批量删除
+            $grid->disableBatchDelete(); //禁用批量删除
             $grid->disableRowSelector(); // 禁用行选择器
 
         });
@@ -156,24 +141,12 @@ class YmReceiveAccountController extends AdminController
             $show->field('login_username');
             $show->field('login_password');
             $show->field('status')->as(function ($status) {
-                $arr = [
-                    1 => '正常',
-                    2 => '封号',
-                    3 => '验证',
-                ];
+                $arr = config('account.status');
                 return $arr[$status];
-            
             });
-            $show->field('type')->as(function ($status) {
-                $arr = [
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ];
-                return $arr[$status];
-            
+            $show->field('type')->as(function ($type) {
+                $arr = config('account.type');
+                return $arr[$type];
             });
 
             $show->field('google_email');
@@ -203,11 +176,11 @@ class YmReceiveAccountController extends AdminController
             $form->ip('login_ip')->rules('required');
             $form->text('login_username')->default('Administrator')->rules('required');
             $form->text('login_password')->rules('required');
-            $form->radio('type')->options([0=>'新账号(14天过包)',1=>'老账号',2=>'转移号',3=>'火种',4=>'接受号',])->default('1');
-            $form->radio('status')->options([1 => '正常',2 => '封号',3 => '验证',])->default('1')->saving(function ($v) {
-                if(empty($v)){
+            $form->radio('type')->options(config('account.type'))->default('1');
+            $form->radio('status')->options(config('account.status'))->default('1')->saving(function ($v) {
+                if (empty($v)) {
                     return 1;
-                }else{
+                } else {
                     return $v;
                 }
             });
@@ -216,9 +189,9 @@ class YmReceiveAccountController extends AdminController
             $form->text('phone_no');
             $form->text('phone_number');
             $form->text('pds')->saving(function ($v) {
-                if(empty($v)){
+                if (empty($v)) {
                     return '';
-                }else{
+                } else {
                     return $v;
                 }
             });;
@@ -234,9 +207,9 @@ class YmReceiveAccountController extends AdminController
             $form->number('num_sus');
 
             $form->textarea('other_data')->saving(function ($v) {
-                if(empty($v)){
+                if (empty($v)) {
                     return '';
-                }else{
+                } else {
                     return $v;
                 }
             });
@@ -247,20 +220,27 @@ class YmReceiveAccountController extends AdminController
                 // 模型已存在，执行更新操作
                 // 你的更新逻辑代码
                 // 假设你是通过 PUT 方法提交表单
-                if ($request->method() == 'PUT') {#更新操作
-                    OperationLog::logDesc($request,'ym_accounts','up','receive_account',$form->model()->id);
+                if ($request->method() == 'PUT') { #更新操作
+                    OperationLog::logDesc($request, 'ym_accounts', 'up', 'receive_account', $form->model()->id);
                 }
-                
             } else {
                 // 模型不存在，执行插入操作
                 // 你的插入逻辑代码
-                if ($request->method() == 'POST') {#插入操作
-                    OperationLog::logDesc($request,'ym_accounts','in','receive_account');
+                if ($request->method() == 'POST') { #插入操作
+                    OperationLog::logDesc($request, 'ym_accounts', 'in', 'receive_account');
                 }
-
             }
 
+            //保存前回调
+            $form->saving(function (Form $form) {
 
+                #key重置状态 需要记录重置时间
+                if ($form->status == 4) {
+                    // echo $form->status.'-'.$form->model()->id;
+
+                    $form->model()->reset_key_time = time();
+                }
+            });
         });
     }
 }
