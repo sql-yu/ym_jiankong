@@ -30,7 +30,7 @@ class YmPackageController extends AdminController
 //             display: block;
 //             max-height: 500px;
 //             overflow-y: scroll;
-            
+
 //         }
 //         /*设置头与内容自动对齐*/
 //         table thead,tfoot,tbody tr {
@@ -48,7 +48,7 @@ class YmPackageController extends AdminController
 //         }
 // STYLE
 //     );
- 
+
         return Grid::make(YmPackage::orderBy("review_time",'desc'), function (Grid $grid) {
             $grid->async();#切换成异步请求
             $package_status = (int)request()->get('package_status', 99);
@@ -76,7 +76,7 @@ class YmPackageController extends AdminController
                 return "<div style='word-wrap: break-word; width: 200px;'>{$value}</div>";
             });
 
-            
+
             $grid->column('manage_server_addresses', '管理服务器地址')->width('10%')->link(function (){
                 $_s = $this->manage_server_addresses;
                 if(empty($_s)){
@@ -136,7 +136,7 @@ class YmPackageController extends AdminController
 
             // $grid->quickSearch('package_name');
             $grid->tableCollapse(false);
-            
+
             //  $grid->selector(function (Grid\Tools\Selector $selector) {
             //     $selector->select('package_status', '状态', \App\Models\YmPackage::$status);
 
@@ -145,7 +145,7 @@ class YmPackageController extends AdminController
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
                 $filter->expand();
-                
+
                 $filter->where('Package', function ($query) {
                     $query->where('package_name', 'like', "%{$this->input}%");
                 })->width(3);
@@ -162,22 +162,22 @@ class YmPackageController extends AdminController
 
 
 
-        
+
             });
 
-            
+
             // $grid->actions(function (Grid\Displayers\Actions $actions) {
             //     $id = $actions->getKey();//获取该行数据id值
             //     $url =  admin_url('package').'/'.$id;//帮助函数admin_url   url地址拼接
             //     $actions->append("<a href={$url}><i class='fa fa-eye'>详细信息</i></a>");
             // });
-        
+
             $grid->toolsWithOutline(false);
             $grid->disableBatchDelete();//禁用批量删除
             $grid->disableRowSelector(); // 禁用行选择器
 
         });
-        
+
     }
 
     /**
@@ -200,11 +200,13 @@ class YmPackageController extends AdminController
             $show->field('text_hash');
             $show->field('text_privacy');
             $show->field('manage_server_addresses');
+            $show->field('domain_name');
+            $show->field('type');
             $show->field('remark','remark')->unescape()->as(function ($content) {
                 // 使用 nl2br() 函数将换行符转换为 HTML 的换行标签
                 return nl2br($content);
             });
-            
+
             // $show->field('account_id',)->display(function ($account_id){
             //     return YmAccount::where('id', $account_id)->value('name');
             // });
@@ -240,7 +242,7 @@ class YmPackageController extends AdminController
                     return $v;
                 }
             });
-         
+
             $form->select('package_status')->options(\App\Models\YmPackage::$status)->default(0);
 
             // if ($form->model()->transfer_status == 0) {
@@ -255,7 +257,7 @@ class YmPackageController extends AdminController
                 });
             // }
 
-            
+
 
             $form->select('receive_account_id','开发者接收账号')->options(function(){
                 return \App\Models\YmAccount::where('account_type','=',1)->pluck('name', 'id')->toArray();
@@ -283,13 +285,29 @@ class YmPackageController extends AdminController
                     return $v;
                 }
             });
-            
+
+            $form->text('domain_name')->saving(function ($v) {
+                if(empty($v)){
+                    return '';
+                }else{
+                    return $v;
+                }
+            });
+
+            $form->text('type')->saving(function ($v) {
+                if(empty($v)){
+                    return '';
+                }else{
+                    return $v;
+                }
+            })->default('com.unity3d.player.UnityPlayerActivity');
+
 
 
             $form->textarea('remark');
 
             $form->saving(function (Form $form) {
-                
+
                 // if($form->transfer_status == 2){
                 //     $form->account_id = 0;
                 // }
@@ -305,7 +323,7 @@ class YmPackageController extends AdminController
                 if ($request->method() == 'PUT') {#更新操作
                     OperationLog::logDesc($request,'ym_package','up','package',$form->model()->id);
                 }
-                
+
             } else {
                 // 模型不存在，执行插入操作
                 // 你的插入逻辑代码
@@ -314,7 +332,7 @@ class YmPackageController extends AdminController
                 }
 
             }
-        
+
 
         });
     }

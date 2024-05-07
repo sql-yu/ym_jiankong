@@ -44,8 +44,8 @@ class Data extends Command
         $client = new \GuzzleHttp\Client(['verify'=>false]);
         $package = YmPackage::where(['package_status'=>[0]])->get();
         $zhengshi_package = YmPackage::where(['package_status'=>[1]])->orderBy('review_time','desc')->get();
-        
-        
+
+
         echo "审核状态检查中:\n";
         foreach($package as $item){
             if(!$item->package_name){
@@ -63,8 +63,8 @@ class Data extends Command
                 ]);
                 $html = (string)$res->getBody();
                 $data = QueryList::html($html)->find('div .Il7kR>img')->attrs('src')->toArray();
-      
-               
+
+
                 if(!empty($data)){
                     $this->send($all_url,"初版上线\n{$item->package_name}\ncom.unity3d.player.UnityPlayerActivity\n{$item->remark}");
                     $item->package_status = 1;
@@ -82,7 +82,7 @@ class Data extends Command
             sleep($timeeee);
         }
 
-       
+
 
         foreach($zhengshi_package as $item){
             if(!$item->package_name){
@@ -111,13 +111,13 @@ class Data extends Command
                             $item->version = $version;
                             $item->icon = $this->setIcon($client,$data);
                             $item->updated_two_at =  date("Y-m-d H:i:s");
-                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n{$item->package_name}\ncom.unity3d.player.UnityPlayerActivity\n{$item->remark}");
+                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n{$item->package_name}\ncom.unity3d.player.UnityPlayerActivity\n{$item->text_hash}\n{$item->remark}");
                         }
                     }
                     if($item->icon == ""){
                          $item->icon = $this->setIcon($client,$data);
                     }
-                  
+
                     $item->save();
                 }
             }catch (\Exception $e){
@@ -152,7 +152,7 @@ class Data extends Command
             echo $e->getMessage();
         }
     }
-    
+
     private function sendJishu($url,$message){
         try{
             $client = new \GuzzleHttp\Client(['verify'=>false]);
@@ -171,7 +171,7 @@ class Data extends Command
             echo $e->getMessage();
         }
     }
-    
+
     private function getVersion($html){
         try{
             $pattern = '/AF_initDataCallback\(\{key:\s*\'ds:5\'.*?\}\)/s';
@@ -181,9 +181,9 @@ class Data extends Command
                     $indexData = strpos($extractedData[0],'data:');
                     $extractedData = substr($extractedData[0],$indexData+5);
                     $searchIndex = strpos($extractedData,'sideChannel:');
-    
+
                     $extractedData = substr($extractedData,0,-(strlen($extractedData)-$searchIndex+2));
-      
+
                     $versionData = json_decode($extractedData,true);
                     $varsion1 = $versionData[1][2];
                     $varsion2 = $varsion1[count($varsion1)-15];
@@ -197,7 +197,7 @@ class Data extends Command
             return "";
         }
     }
-    
+
     private function setIcon($client,$data){
         if(isset($data[0])){
             $imageUrl = $data[0];
@@ -208,6 +208,6 @@ class Data extends Command
         }
         return "";
     }
-    
-    
+
+
 }

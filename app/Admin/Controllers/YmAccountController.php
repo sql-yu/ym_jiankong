@@ -31,7 +31,7 @@ class YmAccountController extends AdminController
 //             display: block;
 //             max-height: 500px;
 //             overflow-y: scroll;
-            
+
 //         }
 //         /*设置头与内容自动对齐*/
 //         table thead,tfoot,tbody tr {
@@ -57,6 +57,8 @@ class YmAccountController extends AdminController
             if($status == 99){#默认查询1
                 $grid->model()->where('status','=',1);
             }
+
+
 
             $grid->model()->where('account_type','=',0);
 
@@ -96,22 +98,22 @@ class YmAccountController extends AdminController
                 // 传递当前行字段值
                 return AccountPackagesTable::make()->payload(['id' => $this->id]);
             });
-        
+
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
                 $filter->expand();
-                
+
                 $filter->where('别名/ip', function ($query) {
 
                     $query->where('name', 'like', "%{$this->input}%")
                         ->orWhere('login_ip', 'like', "%{$this->input}%");
-                
+
                 })->width(3);
 
                 $filter->equal('type','账号类型')->select(config('account.type'))->width(3);
 
                 $filter->equal('status','账号状态')->select(config('account.status'))->default(1)->width(3);
-        
+
             });
 
             $grid->toolsWithOutline(false);
@@ -132,7 +134,7 @@ class YmAccountController extends AdminController
             //     }
 
             // });
-            
+
         });
     }
 
@@ -154,12 +156,12 @@ class YmAccountController extends AdminController
             $show->field('status')->as(function ($status) {
                 $arr = config('account.status');
                 return $arr[$status];
-            
+
             });
             $show->field('type')->as(function ($type) {
                 $arr = config('account.type');
                 return $arr[$type];
-            
+
             });
 
             $show->field('google_email');
@@ -234,7 +236,7 @@ class YmAccountController extends AdminController
                 if ($request->method() == 'PUT') {#更新操作
                     OperationLog::logDesc($request,'ym_accounts','up','account',$form->model()->id);
                 }
-                
+
             } else {
                 // 模型不存在，执行插入操作
                 // 你的插入逻辑代码
@@ -257,8 +259,8 @@ class YmAccountController extends AdminController
             });
 
 
-            
-            
+
+
 
 
         });

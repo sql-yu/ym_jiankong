@@ -1,4 +1,4 @@
-<?php 
+<?php
 return [
     'labels' => [
         'YmPackage' => '包列表',
@@ -16,6 +16,8 @@ return [
         'text_hash' => 'hash值',
         'text_privacy' => '隐私条款',
         'manage_server_addresses' => '管理服务器ip',
+        'domain_name'=>'域名',
+        'type'=>'种类',
     ],
     'options' => [
     ],
