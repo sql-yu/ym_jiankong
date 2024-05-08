@@ -17,7 +17,7 @@ return [
         'text_privacy' => '隐私条款',
         'manage_server_addresses' => '管理服务器ip',
         'domain_name'=>'域名',
-        'type'=>'种类',
+        'type'=>'类名',
     ],
     'options' => [
     ],
