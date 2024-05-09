@@ -66,7 +66,7 @@ class Data extends Command
 
 
                 if(!empty($data)){
-                    $this->send($all_url,"初版上线\n{$item->package_name}\ncom.unity3d.player.UnityPlayerActivity\n{$item->remark}");
+                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n备注：{$item->remark}");
                     $item->package_status = 1;
                     $item->pass_time = date("Y-m-d H:i:s");
                     $item->updated_two_at =  date("Y-m-d H:i:s");
@@ -111,7 +111,7 @@ class Data extends Command
                             $item->version = $version;
                             $item->icon = $this->setIcon($client,$data);
                             $item->updated_two_at =  date("Y-m-d H:i:s");
-                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n{$item->package_name}\ncom.unity3d.player.UnityPlayerActivity\n{$item->text_hash}\n{$item->remark}");
+                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n备注：{$item->remark}");
                         }
                     }
                     if($item->icon == ""){
@@ -122,7 +122,7 @@ class Data extends Command
                 }
             }catch (\Exception $e){
                 // echo $e->getMessage();
-                $this->send($all_url,"！！！ 下线 ！！！\n{$item->package_name}\n{$item->remark}");
+                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n{$item->remark}");
                 $item->package_status = 2;
                 $item->takedown_time = date("Y-m-d");
                 $item->save();
