@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\YmPackage;
+use App\Models\YmAccount;
 use Illuminate\Console\Command;
 use QL\QueryList;
 use Jaeger\GHttp;//引入自带的库
@@ -66,7 +67,8 @@ class Data extends Command
 
 
                 if(!empty($data)){
-                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n备注：{$item->remark}");
+                    $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
+                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n账号：{$account}\n备注：{$item->remark}");
                     $item->package_status = 1;
                     $item->pass_time = date("Y-m-d H:i:s");
                     $item->updated_two_at =  date("Y-m-d H:i:s");
@@ -108,10 +110,11 @@ class Data extends Command
                         $item->version = $version;
                     }else{
                         if($item->version != $version){
+                            $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
                             $item->version = $version;
                             $item->icon = $this->setIcon($client,$data);
                             $item->updated_two_at =  date("Y-m-d H:i:s");
-                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n备注：{$item->remark}");
+                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
                         }
                     }
                     if($item->icon == ""){
@@ -122,7 +125,8 @@ class Data extends Command
                 }
             }catch (\Exception $e){
                 // echo $e->getMessage();
-                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n{$item->remark}");
+                $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
+                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n账号：{$account}\n备注：{$item->remark}");
                 $item->package_status = 2;
                 $item->takedown_time = date("Y-m-d");
                 $item->save();
@@ -207,6 +211,20 @@ class Data extends Command
             return $name;
         }
         return "";
+    }
+
+
+    /*
+     *
+     * 获取包所属账号，优先显示接收账号
+     */
+    private function getAccountByPackage($account_id,$receive_account_id)
+    {
+        $se_account_id = $account_id;
+        if($receive_account_id != 0){
+            $se_account_id = $receive_account_id;
+        }
+        return (YmAccount::query()->where('id',$se_account_id)->value('name'))??'';
     }
 
 
