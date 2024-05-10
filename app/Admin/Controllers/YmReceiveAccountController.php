@@ -67,7 +67,7 @@ class YmReceiveAccountController extends AdminController
             $grid->model()->where('account_type', '=', 1);
 
             $grid->column('id')->sortable();
-            $grid->column('name');
+            $grid->column('name')->copyable();
             $grid->column('login_ip')->copyable();
             // $grid->column('login_username');
             $grid->column('login_password')->copyable();
