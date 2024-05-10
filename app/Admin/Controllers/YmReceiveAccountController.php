@@ -60,9 +60,9 @@ class YmReceiveAccountController extends AdminController
         return Grid::make(new YmAccount(), function (Grid $grid) {
             $grid->async();
             $status = (int)request()->get('status', 99);
-            if ($status == 99) { #默认查询1
-                $grid->model()->where('status', '=', 1);
-            }
+
+            $grid->model()->orderBy('name');
+//            $grid->paginate(3);
 
             $grid->model()->where('account_type', '=', 1);
 
@@ -81,6 +81,9 @@ class YmReceiveAccountController extends AdminController
 
             if (in_array($status, [4, 5])) {
                 $grid->column('reset_key_time', '重置key时间')->display(function () {
+                    if(empty($this->reset_key_time)){
+                        return '';
+                    }
                     return date('Y-m-d H:i:s', $this->reset_key_time);
                 });
             }
@@ -235,7 +238,7 @@ class YmReceiveAccountController extends AdminController
             $form->saving(function (Form $form) {
 
                 #key重置状态 需要记录重置时间
-                if ($form->status == 4) {
+                if (in_array($form->status,[4,5])) {
                     // echo $form->status.'-'.$form->model()->id;
 
                     $form->model()->reset_key_time = time();
