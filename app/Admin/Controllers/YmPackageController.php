@@ -153,11 +153,11 @@ class YmPackageController extends AdminController
                 $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->default(1)->width(3);
 
                 $filter->equal('account_id','开发者账号')->select(function(){
-                        return \App\Models\YmAccount::where('account_type','=',0)->pluck('name', 'id')->toArray();
+                        return \App\Models\YmAccount::where('account_type','=',0)->where('status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
                 $filter->equal('receive_account_id','开发者接收账号')->select(function(){
-                    return \App\Models\YmAccount::where('account_type','=',1)->pluck('name', 'id')->toArray();
+                    return \App\Models\YmAccount::where('account_type','=',1)->where('status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
 
@@ -247,7 +247,7 @@ class YmPackageController extends AdminController
 
             // if ($form->model()->transfer_status == 0) {
                 $form->select('account_id','开发者账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',0)->pluck('name', 'id')->toArray();
+                return \App\Models\YmAccount::where('account_type','=',0)->where('status','!=',2)->pluck('name', 'id')->toArray();
                 })->saving(function ($v) {
                     if(empty($v)){
                         return 0;
@@ -260,7 +260,7 @@ class YmPackageController extends AdminController
 
 
             $form->select('receive_account_id','开发者接收账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',1)->pluck('name', 'id')->toArray();
+                return \App\Models\YmAccount::where('account_type','=',1)->where('status','!=',2)->pluck('name', 'id')->toArray();
             })->saving(function ($v) {
                 if(empty($v)){
                     return 0;
@@ -328,12 +328,22 @@ class YmPackageController extends AdminController
                 // 模型不存在，执行插入操作
                 // 你的插入逻辑代码
                 if ($request->method() == 'POST') {#插入操作
+
+                    #新建包时，检测开发者账号状态是否为重置key完成，如果是 设置为正常状态
+                    $account_id = $request->post('account_id',0);
+                    if($account_id){
+                        $status = YmPackage::query()->where('id',$account_id)->value('status');
+                        if($status == 5){
+                            YmPackage::query()->where('id',$account_id)->value(['status'=>1]);
+                        }
+                    }
+
                     OperationLog::logDesc($request,'ym_package','in','package');
                 }
 
             }
 
-            
+
 
         });
     }
