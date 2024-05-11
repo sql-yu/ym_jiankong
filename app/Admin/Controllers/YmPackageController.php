@@ -11,7 +11,7 @@ use Dcat\Admin\Admin;
 use Dcat\Admin\Http\Controllers\AdminController;
 use App\Libraries\OperationLog;
 
-use App\Model\YmAccount;
+use App\Models\YmAccount;
 
 class YmPackageController extends AdminController
 {
@@ -243,7 +243,13 @@ class YmPackageController extends AdminController
                 }
             });
 
-            $form->select('package_status')->options(\App\Models\YmPackage::$status)->default(0);
+            $form->select('package_status')->options(\App\Models\YmPackage::$status)->default(0)->saving(function ($v) {
+                if(empty($v)){
+                    return 0;
+                }else{
+                    return $v;
+                }
+            });
 
             // if ($form->model()->transfer_status == 0) {
                 $form->select('account_id','开发者账号')->options(function(){
@@ -332,9 +338,9 @@ class YmPackageController extends AdminController
                     #新建包时，检测开发者账号状态是否为重置key完成，如果是 设置为正常状态
                     $account_id = $request->post('account_id',0);
                     if($account_id){
-                        $status = YmPackage::query()->where('id',$account_id)->value('status');
+                        $status = YmAccount::query()->where('id',$account_id)->value('status');
                         if($status == 5){
-                            YmPackage::query()->where('id',$account_id)->value(['status'=>1]);
+                            YmAccount::query()->where('id',$account_id)->value(['status'=>1]);
                         }
                     }
 
