@@ -54,7 +54,7 @@ class YmAccountController extends AdminController
         return Grid::make(new YmAccount(), function (Grid $grid) {
             $grid->async();
 
-            $status = (int)request()->get('status', 99);
+            $status = request()->get('status', 99);
 
             $grid->model()->orderBy('name');
 //            $grid->paginate(3);
@@ -77,7 +77,15 @@ class YmAccountController extends AdminController
             $grid->column('google_authenticator');#->editable()
             $grid->column('status')->options()->radio(config('account.status'));
 
-            if(in_array($status,[4,5])){
+
+            $intersection=0;
+            if(is_array($status)){
+                $intersection = array_intersect($status, [4, 5]);
+            }else{
+                $intersection = (in_array($status, [4, 5]) || ($status==99));
+            }
+//            if (in_array($status, [4, 5])) {
+            if (!empty($intersection)) {
                 $grid->column('reset_key_time','重置key时间')->display(function(){
                     if(empty($this->reset_key_time)){
                         return '';
@@ -114,9 +122,9 @@ class YmAccountController extends AdminController
 
                 })->width(3);
 
-                $filter->equal('type','账号类型')->select(config('account.type'))->width(3);
+                $filter->in('type','账号类型')->multipleSelect(config('account.type'))->width(3);
 
-                $filter->equal('status','账号状态')->select(config('account.status'))->default('1')->width(3);
+                $filter->in('status','账号状态')->multipleSelect(config('account.status'))->default('1')->width(3);
 
             });
 
