@@ -65,11 +65,15 @@ class Data extends Command
                 $html = (string)$res->getBody();
                 $data = QueryList::html($html)->find('div .Il7kR>img')->attrs('src')->toArray();
 
+                #app_name
+                $title_data = QueryList::html($html)->find('div .Il7kR>div>h1')->texts()->toArray();
+
 
                 if(!empty($data)){
                     $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
                     $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n账号：{$account}\n备注：{$item->remark}");
                     $item->package_status = 1;
+                    $item->app_name = $title_data[0]??'';
                     $item->pass_time = date("Y-m-d H:i:s");
                     $item->updated_two_at =  date("Y-m-d H:i:s");
                     $item->version = $this->getVersion($html);
@@ -102,6 +106,9 @@ class Data extends Command
                 ]);
                 $html = (string)$res->getBody();
                 $data = QueryList::html($html)->find('div .Il7kR>img')->attrs('src')->toArray();
+                #app_name
+                $title_data = QueryList::html($html)->find('div .Il7kR>div>h1')->texts()->toArray();
+
                 if(!empty($data)){
                     $version = $this->getVersion($html);
                     echo $item->version . "\n";
@@ -112,6 +119,7 @@ class Data extends Command
                         if($item->version != $version){
                             $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
                             $item->version = $version;
+                            $item->app_name = $title_data[0]??'';
                             $item->icon = $this->setIcon($client,$data);
                             $item->updated_two_at =  date("Y-m-d H:i:s");
                             $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
