@@ -6,6 +6,8 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid\Filter;
 use Dcat\Admin\Show;
 
+use App\Admin\Services\TableService;
+
 /**
  * Dcat-admin - admin builder based on Laravel.
  * @author jqh <https://github.com/jqhph>
@@ -24,3 +26,5 @@ use Dcat\Admin\Show;
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+
+app(TableService::class)->enableDoubleClickMenu();
