@@ -70,24 +70,24 @@ class YmPackageController extends AdminController
                 return admin_url('package')."/{$this->id}";
             });
 
-            $grid->column('app_name', 'App Name')->width('5%')->link(function (){
+            $grid->column('app_name', '包名')->width('5%')->link(function (){
                 // 拼接 id
                 $_s = $this->package_name;
                 return 'https://play.google.com/store/apps/details?id=' . $_s;
             })->display(function ($value) {
-                return "<div style='word-wrap: break-word; width: 150px;'>{$value}</div>";
+                return "<div style='word-wrap: break-word; width: 110px;'>{$value}</div>";
             });
 
-            $grid->column('package_name', 'Package Name')->width('5%')->link(function (){
+            $grid->column('package_name', '包id')->width('5%')->link(function (){
                     // 拼接 id
                     $_s = $this->package_name;
                     return 'https://play.google.com/store/apps/details?id=' . $_s;
             })->display(function ($value) {
-                return "<div style='word-wrap: break-word; width: 150px;'>{$value}</div>";
+                return "<div style='word-wrap: break-word; width: 130px;'>{$value}</div>";
             });
 
 
-            $grid->column('manage_server_addresses', '管理服务器地址')->width('10%')->link(function (){
+            $grid->column('manage_server_addresses', '管理服务器地址')->width('7%')->link(function (){
                 $_s = $this->manage_server_addresses;
                 if(empty($_s)){
                     return '';
@@ -96,11 +96,10 @@ class YmPackageController extends AdminController
             });
 
             // $grid->column('version','版本')->width('10%');
-            $grid->column('updated_two_at','更新时间')->width('7%')->substr(0, 10);
-            $grid->column('pass_time','通过时间')->width('7%')->substr(0, 10);
-             $grid->column('review_time','提审时间')->width('7%')->substr(0, 10);
-            //  $item->updated_two_at =  date("Y-m-d H:i:s");
-            $grid->column('takedown_time','下架时间')->width('7%')->substr(0, 10);
+            $grid->column('review_time','提审时间')->width('6%')->substr(5, 5);
+            $grid->column('pass_time','通过时间')->width('5%')->substr(5, 5);
+            $grid->column('updated_two_at','更新时间')->width('5%')->substr(5, 5);
+            $grid->column('takedown_time','下架时间')->width('6%')->substr(5, 5);
 
             $grid->column('rrr','开发者账号')->display(function(){
                 return $this->account['name']??'';
