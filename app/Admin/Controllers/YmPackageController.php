@@ -52,6 +52,7 @@ class YmPackageController extends AdminController
         return Grid::make(YmPackage::orderBy("review_time",'desc'), function (Grid $grid) {
             $grid->async();#切换成异步请求
 //            $grid->export();
+//            $grid->fixColumns(3, -2);
             $package_status = (int)request()->get('package_status', 99);
             if($package_status == 99){#默认查询1
                 $grid->model()->where('package_status','=',1);
@@ -74,7 +75,7 @@ class YmPackageController extends AdminController
                 $_s = $this->package_name;
                 return 'https://play.google.com/store/apps/details?id=' . $_s;
             })->display(function ($value) {
-                return "<div style='word-wrap: break-word; width: 200px;'>{$value}</div>";
+                return "<div style='word-wrap: break-word; width: 150px;'>{$value}</div>";
             });
 
             $grid->column('package_name', 'Package Name')->width('5%')->link(function (){
@@ -82,7 +83,7 @@ class YmPackageController extends AdminController
                     $_s = $this->package_name;
                     return 'https://play.google.com/store/apps/details?id=' . $_s;
             })->display(function ($value) {
-                return "<div style='word-wrap: break-word; width: 200px;'>{$value}</div>";
+                return "<div style='word-wrap: break-word; width: 150px;'>{$value}</div>";
             });
 
 
@@ -95,11 +96,11 @@ class YmPackageController extends AdminController
             });
 
             // $grid->column('version','版本')->width('10%');
-            $grid->column('updated_two_at','更新时间')->width('10%')->substr(0, 10);
-            $grid->column('pass_time','通过时间')->width('10%')->substr(0, 10);
-             $grid->column('review_time','提审时间')->width('10%')->substr(0, 10);
+            $grid->column('updated_two_at','更新时间')->width('7%')->substr(0, 10);
+            $grid->column('pass_time','通过时间')->width('7%')->substr(0, 10);
+             $grid->column('review_time','提审时间')->width('7%')->substr(0, 10);
             //  $item->updated_two_at =  date("Y-m-d H:i:s");
-            $grid->column('takedown_time','下架时间')->width('10%')->substr(0, 10);
+            $grid->column('takedown_time','下架时间')->width('7%')->substr(0, 10);
 
             $grid->column('rrr','开发者账号')->display(function(){
                 return $this->account['name']??'';
