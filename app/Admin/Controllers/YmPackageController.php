@@ -68,7 +68,15 @@ class YmPackageController extends AdminController
                 return admin_url('package')."/{$this->id}";
             });
 
-            $grid->column('package_name', 'Package')->width('5%')->link(function (){
+            $grid->column('app_name', 'App Name')->width('5%')->link(function (){
+                // 拼接 id
+                $_s = $this->package_name;
+                return 'https://play.google.com/store/apps/details?id=' . $_s;
+            })->display(function ($value) {
+                return "<div style='word-wrap: break-word; width: 200px;'>{$value}</div>";
+            });
+
+            $grid->column('package_name', 'Package Name')->width('5%')->link(function (){
                     // 拼接 id
                     $_s = $this->package_name;
                     return 'https://play.google.com/store/apps/details?id=' . $_s;
@@ -146,9 +154,16 @@ class YmPackageController extends AdminController
                 $filter->panel();
                 $filter->expand();
 
-                $filter->where('Package', function ($query) {
-                    $query->where('package_name', 'like', "%{$this->input}%");
-                })->width(3);
+//                $filter->where('App Name', function ($query) {
+//                    $query->where('app_name', 'like', "%{$this->input}%");
+//                })->width(3);
+
+                $filter->like('app_name')->width(3);
+                $filter->like('package_name')->width(3);
+
+//                $filter->where('Package Name', function ($query) {
+//                    $query->where('package_name', 'like', "%{$this->input}%");
+//                })->width(3);
 
                 $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->default(1)->width(3);
 
@@ -191,6 +206,7 @@ class YmPackageController extends AdminController
     {
         return Show::make($id, new YmPackage(), function (Show $show) {
             // $show->field('id');
+            $show->field('app_name');
             $show->field('package_name');
             $show->field('review_time');
             $show->field('pass_time');
@@ -231,6 +247,7 @@ class YmPackageController extends AdminController
     {
         return Form::make(new YmPackage(), function (Form $form) {
             // $form->display('id');
+            $form->text('app_name');
             $form->text('package_name')->required();
             $form->datetime('review_time')->format('YYYY-MM-DD')->default(date("Y-m-d H:i:s"));
             $form->datetime('pass_time')->format('YYYY-MM-DD');
@@ -340,7 +357,7 @@ class YmPackageController extends AdminController
                     if($account_id){
                         $status = YmAccount::query()->where('id',$account_id)->value('status');
                         if($status == 5){
-                            YmAccount::query()->where('id',$account_id)->value(['status'=>1]);
+                            YmAccount::query()->where('id',$account_id)->update(['status'=>1]);
                         }
                     }
 
