@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'laravel/laravel',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '17c423efbe95d72dc97bb0f581b2f04caaf4473a',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -16,6 +16,15 @@
             'reference' => '73e5b88775c64ccc0b84fb60836b30dc9d92ac4a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../asm89/stack-cors',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'box/spout' => array(
+            'pretty_version' => 'v3.3.0',
+            'version' => '3.3.0.0',
+            'reference' => '9bdb027d312b732515b884a341c0ad70372c6295',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../box/spout',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -66,6 +75,15 @@
             'replaced' => array(
                 0 => '*',
             ),
+        ),
+        'dcat/easy-excel' => array(
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'reference' => '20ee838b07f1f5d9c075b84e6f4807cbb21c44b0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../dcat/easy-excel',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'dcat/laravel-admin' => array(
             'pretty_version' => '2.2.2-beta',
@@ -494,9 +512,9 @@
             'dev_requirement' => false,
         ),
         'laravel/laravel' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '17c423efbe95d72dc97bb0f581b2f04caaf4473a',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

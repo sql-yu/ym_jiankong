@@ -71,7 +71,7 @@ class Data extends Command
 
                 if(!empty($data)){
                     $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
-                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n账号：{$account}\n备注：{$item->remark}");
+                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
                     $item->package_status = 1;
                     $item->app_name = $title_data[0]??'';
                     $item->pass_time = date("Y-m-d H:i:s");

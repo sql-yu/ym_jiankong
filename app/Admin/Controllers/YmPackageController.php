@@ -51,7 +51,7 @@ class YmPackageController extends AdminController
 
         return Grid::make(YmPackage::orderBy("review_time",'desc'), function (Grid $grid) {
             $grid->async();#切换成异步请求
-//            $grid->export();
+            $grid->export();
 //            $grid->fixColumns(3, -2);
             $package_status = (int)request()->get('package_status', 99);
             if($package_status == 99){#默认查询1

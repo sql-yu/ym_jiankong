@@ -89,6 +89,7 @@ return array(
     'Doctrine\\Common\\' => array($vendorDir . '/doctrine/event-manager/src'),
     'Dflydev\\DotAccessData\\' => array($vendorDir . '/dflydev/dot-access-data/src'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
+    'Dcat\\EasyExcel\\' => array($vendorDir . '/dcat/easy-excel/src'),
     'Dcat\\Admin\\' => array($vendorDir . '/dcat/laravel-admin/src'),
     'Database\\Seeders\\' => array($baseDir . '/database/seeders'),
     'Database\\Factories\\' => array($baseDir . '/database/factories'),
@@ -98,6 +99,7 @@ return array(
     'Cache\\Adapter\\Filesystem\\' => array($vendorDir . '/cache/filesystem-adapter'),
     'Cache\\Adapter\\Common\\' => array($vendorDir . '/cache/adapter-common'),
     'Brick\\Math\\' => array($vendorDir . '/brick/math/src'),
+    'Box\\Spout\\' => array($vendorDir . '/box/spout/src/Spout'),
     'Asm89\\Stack\\' => array($vendorDir . '/asm89/stack-cors/src'),
     'App\\' => array($baseDir . '/app'),
 );
