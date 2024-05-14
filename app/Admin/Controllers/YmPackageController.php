@@ -78,12 +78,8 @@ class YmPackageController extends AdminController
                 return "<div style='word-wrap: break-word; width: 110px;'>{$value}</div>";
             });
 
-            $grid->column('package_name', '包id')->width('5%')->link(function (){
-                    // 拼接 id
-                    $_s = $this->package_name;
-                    return 'https://play.google.com/store/apps/details?id=' . $_s;
-            })->display(function ($value) {
-                return "<div style='word-wrap: break-word; width: 130px;'>{$value}</div>";
+            $grid->column('package_name', '包id')->width('5%')->copyable()->display(function ($value) {
+                return "<div style='word-wrap: break-word; width: 150px;'>{$value}</div>";
             });
 
 
@@ -150,6 +146,12 @@ class YmPackageController extends AdminController
             //     $selector->select('package_status', '状态', \App\Models\YmPackage::$status);
 
             // });
+
+            // 添加查看包的key文件按钮
+//            $grid->actions(function (Grid\Displayers\Actions $actions) {
+//                // 默认编辑按钮
+//                $actions->append('<a href="key_management?&package_name='.$this->package_name.'" >查看key文件</a>');
+//            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
