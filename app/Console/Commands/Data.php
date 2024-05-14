@@ -115,6 +115,7 @@ class Data extends Command
                     echo $version. "\n";
                     if($item->version == ""){
                         $item->version = $version;
+                        $item->app_name = $title_data[0]??'';
                     }else{
                         if($item->version != $version){
                             $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
@@ -127,6 +128,9 @@ class Data extends Command
                     }
                     if($item->icon == ""){
                          $item->icon = $this->setIcon($client,$data);
+                    }
+                    if(empty($item->app_name)){
+                        $item->app_name = $title_data[0]??'';
                     }
 
                     $item->save();
