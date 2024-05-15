@@ -86,6 +86,9 @@ class YmPackageController extends AdminController
                 }
                 return 'http://'.$_s.':3389/ymgadmin';
             });
+            $grid->column('rrr','开发者账号')->display(function(){
+                return $this->account['name']??'';
+            })->copyable();
 
             // $grid->column('version','版本')->width('10%');
             $grid->column('review_time','提审时间')->width('6%')->substr(5, 5);
@@ -93,25 +96,24 @@ class YmPackageController extends AdminController
             $grid->column('updated_two_at','更新时间')->width('5%')->substr(5, 5);
             $grid->column('takedown_time','下架时间')->width('6%')->substr(5, 5);
 
-            $grid->column('rrr','开发者账号')->display(function(){
-                return $this->account['name']??'';
-            })->copyable();
 
-            $grid->column('ttt','开发者账号类型')->display(function(){
-                $type = $this->account['type']??'';
-                $arr = [
-                    0=>'新账号(14天过包)',
-                    1=>'老账号',
-                    2=>'转移号',
-                    3=>'火种',
-                    4=>'接受号',
-                ];
-                return $arr[$type]??'';
-            });
+
+//            $grid->column('ttt','开发者账号类型')->display(function(){
+//                $type = $this->account['type']??'';
+//                $arr = [
+//                    0=>'新账号(14天过包)',
+//                    1=>'老账号',
+//                    2=>'转移号',
+//                    3=>'火种',
+//                    4=>'接受号',
+//                ];
+//                return $arr[$type]??'';
+//            });
 
 
 
 
+            $grid->column('delivery_time','交付时间')->width('6%')->substr(5, 5);
             $grid->column('b_url','b面连接')->width('10%')->link(function (){
                 // 拼接 id
                 $_s = $this->b_url;
@@ -144,10 +146,16 @@ class YmPackageController extends AdminController
             // });
 
             // 添加查看包的key文件按钮
-//            $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                //关闭行操作 删除
+                $actions->disableDelete();
+                // 去掉查看
+                $actions->disableView();
+
+
 //                // 默认编辑按钮
 //                $actions->append('<a href="key_management?&package_name='.$this->package_name.'" >查看key文件</a>');
-//            });
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
@@ -280,6 +288,7 @@ class YmPackageController extends AdminController
             // }
 
 
+            $form->datetime('delivery_time')->format('YYYY-MM-DD');
 
             $form->select('receive_account_id','开发者接收账号')->options(function(){
                 return \App\Models\YmAccount::where('account_type','=',1)->where('status','!=',2)->pluck('name', 'id')->toArray();
@@ -365,7 +374,12 @@ class YmPackageController extends AdminController
 
             }
 
-
+            // 去掉删除按钮
+            $form->tools(function (Form\Tools $tools) {
+                $tools->disableDelete();
+                // 去掉查看
+                $tools->disableView();
+            });
 
         });
     }

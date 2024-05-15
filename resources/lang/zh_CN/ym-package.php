@@ -10,6 +10,7 @@ return [
         'review_time' => '提审时间',
         'pass_time' => '通过时间',
         'takedown_time' => '下架时间',
+        'delivery_time' => '交付时间',
         'package_status' => '状态',
         'b_url'=>'b面连接',
         'remark'=>'备注',

@@ -111,6 +111,18 @@ class YmAccountController extends AdminController
                 return AccountPackagesTable::make()->payload(['id' => $this->id]);
             });
 
+            // 添加查看包的key文件按钮
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                //关闭行操作 删除
+                $actions->disableDelete();
+                // 去掉查看
+                $actions->disableView();
+
+
+//                // 默认编辑按钮
+//                $actions->append('<a href="key_management?&package_name='.$this->package_name.'" >查看key文件</a>');
+            });
+
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->panel();
                 $filter->expand();
@@ -272,6 +284,12 @@ class YmAccountController extends AdminController
 
 
 
+            // 去掉删除按钮
+            $form->tools(function (Form\Tools $tools) {
+                $tools->disableDelete();
+                // 去掉查看
+                $tools->disableView();
+            });
 
 
 
