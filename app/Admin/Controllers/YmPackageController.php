@@ -63,12 +63,8 @@ class YmPackageController extends AdminController
             $grid->column('icon','icon')
                 // ->image("http://54.173.118.3",100,100)
                 ->display(function($icon){#
-                    return '<img  src="http://54.173.118.3'.$icon.'" style="max-width:100px;max-height:100px;cursor:pointer" class="img img-thumbnail">';
-                })
-                ->link(function () {#
-                // 这里可以构造详情页面的URL
-                return admin_url('package')."/{$this->id}";
-            });
+                    return '<img  src="https://www.ymbjk.com'.$icon.'" style="max-width:100px;max-height:100px;cursor:pointer" class="img img-thumbnail">';
+                });
 
             $grid->column('app_name', '包名')->width('5%')->link(function (){
                 // 拼接 id

@@ -17,4 +17,6 @@ Route::group([
     $router->resource('developers', 'YmDeveloperController');
     $router->resource('account', 'YmAccountController');
     $router->resource('receive_account', 'YmReceiveAccountController');
+    $router->resource('key_management', 'YmKeyManagementController');
+    $router->any('users/files', 'FileController@handle');
 });
