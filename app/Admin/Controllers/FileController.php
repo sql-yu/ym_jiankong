@@ -9,7 +9,7 @@ class FileController
     use HasUploadedFile;
 
     #允许上传的文件类型
-    public  $allowable_file_ytpe = ['jks','keystore'];
+    public  $allowable_file_ytpe = ['jks','keystore','pem'];
 
     public function handle()
     {
