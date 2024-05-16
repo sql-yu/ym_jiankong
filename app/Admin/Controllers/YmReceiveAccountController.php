@@ -60,8 +60,15 @@ class YmReceiveAccountController extends AdminController
         return Grid::make(new YmAccount(), function (Grid $grid) {
             $grid->async();
             $status = request()->get('status', 99);
+            if(is_array($status)){
+                if(in_array(2,$status)){
+                    $grid->model()->orderBy('sealed_time','desc');
+                }
+            }
 
-            $grid->model()->orderBy('name');
+
+
+            $grid->model()->orderBy('name','desc');
 //            $grid->paginate(3);
 
             $grid->model()->where('account_type', '=', 1);
@@ -92,6 +99,21 @@ class YmReceiveAccountController extends AdminController
                         return '';
                     }
                     return date('Y-m-d H:i:s', $this->reset_key_time);
+                });
+            }
+
+            $is_sealed = 0;
+            if(is_array($status)){
+                $is_sealed = array_intersect($status, [2]);
+            }else{
+                $is_sealed = (in_array($status, [2]) || ($status==99));
+            }
+            if (!empty($is_sealed)) {
+                $grid->column('sealed_time','封号时间')->display(function(){
+                    if(empty($this->sealed_time)){
+                        return '';
+                    }
+                    return $this->sealed_time;
                 });
             }
 
@@ -228,6 +250,8 @@ class YmReceiveAccountController extends AdminController
 
             $form->number('num_sus');
 
+            $form->datetime('sealed_time');
+
             $form->textarea('other_data')->saving(function ($v) {
                 if (empty($v)) {
                     return '';
@@ -261,6 +285,13 @@ class YmReceiveAccountController extends AdminController
                     // echo $form->status.'-'.$form->model()->id;
 
                     $form->model()->reset_key_time = time();
+                }
+
+                #封号时 记录时间
+                if (in_array($form->status,[2])) {
+                    // echo $form->status.'-'.$form->model()->id;
+
+                    $form->model()->sealed_time = date('Y-m-d H:i:s',time());
                 }
             });
 

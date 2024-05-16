@@ -1,4 +1,4 @@
-<?php 
+<?php
 return [
     'labels' => [
         'YmReceiveAccount' => 'YmReceiveAccount',
@@ -19,6 +19,7 @@ return [
         'pds' => 'PDS',
         'google_authenticator' => '谷歌验证器',
         'other_data' => '备注',
+        'sealed_time'=>'封号时间',
     ],
     'options' => [
     ],
