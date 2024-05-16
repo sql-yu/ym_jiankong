@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Renderable\AccountInfoTable;
 use App\Models\YmPackage;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -88,7 +89,19 @@ class YmPackageController extends AdminController
             });
             $grid->column('rrr','开发者账号')->display(function(){
                 return $this->account['name']??'';
-            })->copyable();
+            })->modal(function (Grid\Displayers\Modal $modal) {
+                // 标题
+                $modal->title('账号信息');
+
+                // 自定义图标
+                // $modal->icon('feather icon-edit');
+
+                // 传递当前行字段值
+                if($this->account){
+                    return AccountInfoTable::make()->payload(['id' => $this->account['id']]);
+                }
+
+            });
 
             // $grid->column('version','版本')->width('10%');
             $grid->column('review_time','提审时间')->width('6%')->substr(5, 5);
