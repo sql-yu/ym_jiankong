@@ -154,7 +154,7 @@ class YmKeyManagementController extends AdminController
             $alias = $key??'';
         }
         if(empty($alias_password)){
-            $alias = $key??'';
+            $alias_password = $key??'';
         }
 
         foreach ($package_name as $item){
