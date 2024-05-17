@@ -36,12 +36,12 @@ class ResetKey extends Command
 
     public function handle()
     {
-        $data = YmAccount::query()->where('status',4)->get(['id','reset_key_time','status'])->toArray();
+        $data = YmAccount::query()->where('key_status',2)->get(['id','key_complete_time','status'])->toArray();
 
         if($data){
             foreach($data as $v){
-                if((time() - $v['reset_key_time']) > (2*24*60*60)){#大于两天
-                    YmAccount::query()->where('id',$v['id'])->update(['status'=>5]);
+                if((time() - $v['key_complete_time']) > (2*24*60*60)){#大于两天
+                    YmAccount::query()->where('id',$v['id'])->update(['key_status'=>3]);
                 }
             }
 

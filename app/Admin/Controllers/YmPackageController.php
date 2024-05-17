@@ -188,11 +188,11 @@ class YmPackageController extends AdminController
                 $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->default(1)->width(3);
 
                 $filter->equal('account_id','开发者账号')->select(function(){
-                        return \App\Models\YmAccount::where('account_type','=',0)->where('status','!=',2)->pluck('name', 'id')->toArray();
+                        return \App\Models\YmAccount::where('account_type','=',0)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
                 $filter->equal('receive_account_id','开发者接收账号')->select(function(){
-                    return \App\Models\YmAccount::where('account_type','=',1)->where('status','!=',2)->pluck('name', 'id')->toArray();
+                    return \App\Models\YmAccount::where('account_type','=',1)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
 
@@ -280,7 +280,7 @@ class YmPackageController extends AdminController
                 }
             });
 
-            $form->select('package_status')->options(\App\Models\YmPackage::$status)->default(0)->saving(function ($v) {
+            $form->radio('package_status')->options(\App\Models\YmPackage::$status)->default(0)->saving(function ($v) {
                 if(empty($v)){
                     return 0;
                 }else{
@@ -290,7 +290,7 @@ class YmPackageController extends AdminController
 
             // if ($form->model()->transfer_status == 0) {
                 $form->select('account_id','开发者账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',0)->where('status','!=',2)->pluck('name', 'id')->toArray();
+                return \App\Models\YmAccount::where('account_type','=',0)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
                 })->saving(function ($v) {
                     if(empty($v)){
                         return 0;
@@ -304,7 +304,7 @@ class YmPackageController extends AdminController
             $form->datetime('delivery_time')->format('YYYY-MM-DD');
 
             $form->select('receive_account_id','开发者接收账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',1)->where('status','!=',2)->pluck('name', 'id')->toArray();
+                return \App\Models\YmAccount::where('account_type','=',1)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
             })->saving(function ($v) {
                 if(empty($v)){
                     return 0;
@@ -313,7 +313,7 @@ class YmPackageController extends AdminController
                 }
             });
 
-            $form->radio('transfer_status')->options(['0' => '未操作', '1'=> '转移中','2'=>'转移完成','3'=>'sus','4'=>'被取消',])->default('0')->saving(function ($v) {
+            $form->radio('transfer_status')->options(config('package.transfer_status'))->default('0')->saving(function ($v) {
                 if($v == 2){
                     $this->account_id = 0;
                 }
@@ -352,6 +352,24 @@ class YmPackageController extends AdminController
 
             $form->saving(function (Form $form) {
 
+                $transfer_status = request()->post('transfer_status',0);
+                if(in_array($transfer_status,[5,1,2])){#5需转移，1转移中，2转移完成
+                    $account_id = request()->post('account_id',0);#开发者账号
+                    $receive_account_id = request()->post('receive_account_id',0);#接收账号
+                    if(empty($receive_account_id) || empty($account_id)){
+                        return $form->response()->error('开发账号和接收账号不能为空~'.request()->post('transfer_status',0));
+                    }else{
+                        #更新账号转移状态
+                        $do_up_arr = [5=>2,1=>3,2=>4];
+                        YmAccount::query()->whereIn('id',[$receive_account_id,$account_id])->update(['transfer_status'=>$do_up_arr[$transfer_status]]);
+                    }
+
+
+
+                }
+
+//                return $form->response()->error('服务器出错了~'.request()->post('transfer_status',0));
+
                 // if($form->transfer_status == 2){
                 //     $form->account_id = 0;
                 // }
@@ -373,12 +391,12 @@ class YmPackageController extends AdminController
                 // 你的插入逻辑代码
                 if ($request->method() == 'POST') {#插入操作
 
-                    #新建包时，检测开发者账号状态是否为重置key完成，如果是 设置为正常状态
+                    #新建包时，检测key状态是否为重置key完成，如果是 设置为正常状态
                     $account_id = $request->post('account_id',0);
                     if($account_id){
-                        $status = YmAccount::query()->where('id',$account_id)->value('status');
-                        if($status == 5){
-                            YmAccount::query()->where('id',$account_id)->update(['status'=>1]);
+                        $status = YmAccount::query()->where('id',$account_id)->value('key_status');
+                        if($status == 2){
+                            YmAccount::query()->where('id',$account_id)->update(['key_status'=>1]);
                         }
                     }
 

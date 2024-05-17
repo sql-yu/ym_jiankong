@@ -9,7 +9,7 @@ return [
         'login_username' => 'vps-账号',
         'login_password' => 'vps-密码',
         'type' => '账号类型',
-        'status' => '账号状态',
+        'account_status' => '账号状态',
         'num_sus' => '违规次数',
         'spare_code' => '备用码',
         'google_email' => '谷歌邮箱',
@@ -20,6 +20,8 @@ return [
         'google_authenticator' => '谷歌验证器',
         'other_data' => '备注',
         'sealed_time'=>'封号时间',
+        'transfer_status'=>'转移状态',
+        'key_status'=>'key状态',
     ],
     'options' => [
     ],
