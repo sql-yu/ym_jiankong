@@ -70,7 +70,7 @@ class Data extends Command
 
 
                 if(!empty($data)){
-                    $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
+                    $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
                     $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
                     $item->package_status = 1;
                     $item->app_name = $title_data[0]??'';
@@ -119,7 +119,7 @@ class Data extends Command
                         $item->app_name = $title_data[0]??'';
                     }else{
                         if($item->version != $version){
-                            $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
+                            $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
                             $item->version = $version;
                             $item->app_name = $title_data[0]??'';
                             $item->icon = $this->setIcon($client,$data);
@@ -139,8 +139,8 @@ class Data extends Command
                 }
             }catch (\Exception $e){
                 // echo $e->getMessage();
-                $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id);
-                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n账号：{$account}\n备注：{$item->remark}");
+                $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
+                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n账号：{$account}\nb面连接：{$item->b_url}\n备注：{$item->remark}");
                 $item->package_status = 2;
                 $item->takedown_time = date("Y-m-d");
                 $item->save();
@@ -232,12 +232,20 @@ class Data extends Command
      *
      * 获取包所属账号，优先显示接收账号
      */
-    private function getAccountByPackage($account_id,$receive_account_id)
+    private function getAccountByPackage($account_id,$receive_account_id,$transfer_status)
     {
-        $se_account_id = $account_id;
-        if($receive_account_id != 0){
-            $se_account_id = $receive_account_id;
+        #转移成功
+        if($transfer_status==2){
+            if($receive_account_id != 0){
+                $se_account_id = $receive_account_id;
+            }else{
+                $se_account_id = $account_id;
+            }
+        }else{
+            $se_account_id = $account_id;
         }
+
+
         return (YmAccount::query()->where('id',$se_account_id)->value('name'))??'';
     }
 
