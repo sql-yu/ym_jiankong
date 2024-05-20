@@ -36,7 +36,7 @@ class ResetKey extends Command
 
     public function handle()
     {
-        $data = YmAccount::query()->where('key_status',2)->get(['id','key_complete_time','status'])->toArray();
+        $data = YmAccount::query()->where('key_status',2)->get(['id','key_complete_time','account_status'])->toArray();
 
         if($data){
             foreach($data as $v){
