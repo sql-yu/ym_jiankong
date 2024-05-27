@@ -356,15 +356,16 @@ class YmPackageController extends AdminController
                 if(in_array($transfer_status,[5,1,2])){#5需转移，1转移中，2转移完成
                     $account_id = request()->post('account_id',0);#开发者账号
                     $receive_account_id = request()->post('receive_account_id',0);#接收账号
-                    if(empty($receive_account_id) || empty($account_id)){
-                        return $form->response()->error('开发账号和接收账号不能为空~'.request()->post('transfer_status',0));
-                    }else{
-                        #更新账号转移状态
-                        $do_up_arr = [5=>2,1=>3,2=>4];
-                        YmAccount::query()->whereIn('id',[$receive_account_id,$account_id])->update(['transfer_status'=>$do_up_arr[$transfer_status]]);
+
+                    if(in_array($transfer_status,[1,2])){#1转移中，2转移完成
+                        if(empty($receive_account_id) || empty($account_id)){
+                            return $form->response()->error('开发账号和接收账号不能为空~'.request()->post('transfer_status',0));
+                        }
                     }
 
-
+                    #更新账号转移状态
+                    $do_up_arr = [5=>2,1=>3,2=>4];
+                    YmAccount::query()->whereIn('id',[$receive_account_id,$account_id])->update(['transfer_status'=>$do_up_arr[$transfer_status]]);
 
                 }
 
