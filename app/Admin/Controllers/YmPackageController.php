@@ -289,15 +289,43 @@ class YmPackageController extends AdminController
             });
 
             // if ($form->model()->transfer_status == 0) {
-                $form->select('account_id','开发者账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',0)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
+
+            #如果是编辑的时候 避免开发者账号被封 无数据显示的问题
+            if($form->isEditing()){
+                $form->select('account_id', '开发者账号')->options(function () {
+                    $id=request()->route()->parameters()['package'];
+                    $pkdata = YmPackage::query()->find($id);
+
+                    return \App\Models\YmAccount::where(function ($query)use($pkdata) {
+                        $query->where(function ($query) {
+                            $query->where('account_type', '0')
+                                ->where('account_status', '!=', 2);
+                        })->orWhere(function ($query) use ($pkdata) {
+                            $query->where('id', $pkdata->account_id);
+                        });
+                    })->pluck('name', 'id')->toArray();
+
+
                 })->saving(function ($v) {
-                    if(empty($v)){
+                    if (empty($v)) {
                         return 0;
-                    }else{
+                    } else {
                         return $v;
                     }
                 });
+
+            }else{
+                $form->select('account_id', '开发者账号')->options(function () {
+                    return \App\Models\YmAccount::where('account_type', '=', 0)->where('account_status', '!=', 2)->pluck('name', 'id')->toArray();
+                })->saving(function ($v) {
+                    if (empty($v)) {
+                        return 0;
+                    } else {
+                        return $v;
+                    }
+                });
+            }
+
             // }
 
 
