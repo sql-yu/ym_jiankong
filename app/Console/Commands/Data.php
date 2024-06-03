@@ -70,8 +70,8 @@ class Data extends Command
 
 
                 if(!empty($data)){
-                    $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
-                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
+                    $account_data = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
+                    $this->send($all_url,"初版上线\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account_data['name']}\n账号类型：{$account_data['type']}\n备注：{$item->remark}");
                     $item->package_status = 1;
                     $item->app_name = $title_data[0]??'';
                     $item->pass_time = date("Y-m-d H:i:s");
@@ -119,13 +119,13 @@ class Data extends Command
                         $item->app_name = $title_data[0]??'';
                     }else{
                         if($item->version != $version){
-                            $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
+                            $account_data = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
                             $item->version = $version;
                             $item->app_name = $title_data[0]??'';
                             $item->icon = $this->setIcon($client,$data);
                             $item->updated_two_at =  date("Y-m-d H:i:s");
                             $item->delivery_time =  date("Y-m-d H:i:s");
-                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account}\n备注：{$item->remark}");
+                            $this->send($all_url,"更新上线，新版本{$version},更新成功!\n包名：{$item->package_name}\n类名：{$item->type}\n哈希值：{$item->text_hash}\n账号：{$account_data['name']}\n账号类型：{$account_data['type']}\n备注：{$item->remark}");
                         }
                     }
                     if($item->icon == ""){
@@ -139,8 +139,8 @@ class Data extends Command
                 }
             }catch (\Exception $e){
                 // echo $e->getMessage();
-                $account = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
-                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n账号：{$account}\nb面连接：{$item->b_url}\n备注：{$item->remark}");
+                $account_data = $this->getAccountByPackage($item->account_id,$item->receive_account_id,$item->transfer_status);
+                $this->send($all_url,"！！！ 下线 ！！！\n包名：{$item->package_name}\n账号：{$account_data['name']}\n账号类型：{$account_data['type']}\nb面连接：{$item->b_url}\n备注：{$item->remark}");
                 $item->package_status = 2;
                 $item->takedown_time = date("Y-m-d");
                 $item->save();
@@ -244,9 +244,11 @@ class Data extends Command
         }else{
             $se_account_id = $account_id;
         }
+        $type_arr = [1=>'老账号',2=>'转移号',3=>'火种',4=>'接受号'];
 
 
-        return (YmAccount::query()->where('id',$se_account_id)->value('name'))??'';
+        $data =  YmAccount::query()->where('id',$se_account_id)->select(['name','type'])->first();
+        return ['name'=>$data->name??'','type'=>$type_arr[$data->type]??''];
     }
 
 
