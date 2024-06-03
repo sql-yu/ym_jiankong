@@ -31,20 +31,20 @@ class YmPackage extends Model
     // 关联开发者账号表
     public function account()
     {
-        return $this->hasOne(YmAccount::class, 'id', 'account_id')->where('account_type','=',0);
+        return $this->hasOne(YmAccount::class, 'id', 'account_id')->whereIn('account_type', [0,1]);
     }
 
 
     // 关联开发者接收账号表
     public function receive_account()
     {
-        return $this->hasOne(YmAccount::class, 'id', 'receive_account_id')->where('account_type','=',1);
+        return $this->hasOne(YmAccount::class, 'id', 'receive_account_id')->whereIn('account_type', [0,1]);
     }
 
     protected static function boot()
     {
         parent::boot();
- 
+
         static::deleting(function($model) {
             #删除时记录日志
             $request = request();

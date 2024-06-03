@@ -188,11 +188,11 @@ class YmPackageController extends AdminController
                 $filter->equal('package_status')->select(\App\Models\YmPackage::$status)->default(1)->width(3);
 
                 $filter->equal('account_id','开发者账号')->select(function(){
-                        return \App\Models\YmAccount::where('account_type','=',0)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
+                        return \App\Models\YmAccount::whereIn('account_type', [0,1])->where('account_status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
                 $filter->equal('receive_account_id','开发者接收账号')->select(function(){
-                    return \App\Models\YmAccount::where('account_type','=',1)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
+                    return \App\Models\YmAccount::whereIn('account_type', [0,1])->where('account_status','!=',2)->pluck('name', 'id')->toArray();
                 })->width(3);
 
 
@@ -298,7 +298,8 @@ class YmPackageController extends AdminController
 
                     return \App\Models\YmAccount::where(function ($query)use($pkdata) {
                         $query->where(function ($query) {
-                            $query->where('account_type', '0')
+//                            $query->where('account_type', '0')
+                            $query->whereIn('account_type', [0,1])
                                 ->where('account_status', '!=', 2);
                         })->orWhere(function ($query) use ($pkdata) {
                             $query->where('id', $pkdata->account_id);
@@ -316,7 +317,7 @@ class YmPackageController extends AdminController
 
             }else{
                 $form->select('account_id', '开发者账号')->options(function () {
-                    return \App\Models\YmAccount::where('account_type', '=', 0)->where('account_status', '!=', 2)->pluck('name', 'id')->toArray();
+                    return \App\Models\YmAccount::whereIn('account_type', [0,1])->where('account_status', '!=', 2)->pluck('name', 'id')->toArray();
                 })->saving(function ($v) {
                     if (empty($v)) {
                         return 0;
@@ -332,7 +333,7 @@ class YmPackageController extends AdminController
             $form->datetime('delivery_time')->format('YYYY-MM-DD');
 
             $form->select('receive_account_id','开发者接收账号')->options(function(){
-                return \App\Models\YmAccount::where('account_type','=',1)->where('account_status','!=',2)->pluck('name', 'id')->toArray();
+                return \App\Models\YmAccount::whereIn('account_type', [0,1])->where('account_status','!=',2)->pluck('name', 'id')->toArray();
             })->saving(function ($v) {
                 if(empty($v)){
                     return 0;
