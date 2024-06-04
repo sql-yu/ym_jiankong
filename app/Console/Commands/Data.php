@@ -43,8 +43,8 @@ class Data extends Command
     {
         $url = "https://play.google.com/store/apps/details?id=";
         $client = new \GuzzleHttp\Client(['verify'=>false]);
-        $package = YmPackage::where(['package_status'=>[0]])->get();
-        $zhengshi_package = YmPackage::where(['package_status'=>[1]])->orderBy('review_time','desc')->get();
+        $package = YmPackage::whereIn('package_status',[0])->get();
+        $zhengshi_package = YmPackage::whereIn('package_status',[1])->orderBy('review_time','desc')->get();
 
 
         echo "审核状态检查中:\n";
