@@ -248,7 +248,12 @@ class Data extends Command
 
 
         $data =  YmAccount::query()->where('id',$se_account_id)->select(['name','type'])->first();
-        return ['name'=>$data->name??'','type'=>$type_arr[$data->type]??''];
+        if($data){
+            return ['name'=>$data->name??'','type'=>$type_arr[$data->type]??''];
+        }else{
+            return ['name'=>'','type'=>''];
+        }
+
     }
 
 
