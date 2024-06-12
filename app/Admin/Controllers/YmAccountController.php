@@ -190,6 +190,7 @@ class YmAccountController extends AdminController
                 }
             });;
             $form->text('google_authenticator');
+            $form->text('clientele');
 
             $form->list('spare_code')->saving(function ($v) {
                 // 转化为json格式存储

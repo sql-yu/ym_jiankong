@@ -186,6 +186,7 @@ class YmReceiveAccountController extends AdminController
                 }
             });;
             $form->text('google_authenticator');
+            $form->text('clientele');
 
             $form->hidden('account_type')->value(1);
 

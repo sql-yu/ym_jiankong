@@ -22,6 +22,7 @@ return [
         'sealed_time'=>'封号时间',
         'transfer_status'=>'转移状态',
         'key_status'=>'key状态',
+        'clientele'=>'客户',
     ],
     'options' => [
     ],
